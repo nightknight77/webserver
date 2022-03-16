@@ -15,15 +15,17 @@ impl Server {
     pub fn run(self) {
         let tcp_listener = TcpListener::bind(&self.address).unwrap();
         loop {
-            let tup = tcp_listener.accept();
-            match tup {
-                Ok((mut tcp_stream, _)) => {
+            match tcp_listener.accept() {
+                Ok((mut stream, _)) => {
                     println!("TCP connection established! {}",
                              self.address);
-                    let mut buffer = [0;1024];
-                    let request = tcp_stream.read(&mut buffer);
-                    println!("{}", request.unwrap().to_string());
-                },
+                    let mut buffer = [0; 1024];
+                    match stream.read(&mut buffer) {
+                        Ok(_) => println!("Received a request: {}",
+                                                String::from_utf8_lossy(&buffer[..])),
+                        Err(e) => println!("Failed to read from connection: {}", e)
+                    }
+                }
                 Err(e) => println!("TCP connection failed {}", e)
             }
         }
