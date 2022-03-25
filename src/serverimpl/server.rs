@@ -39,7 +39,7 @@ impl Server {
             Ok(_) => {
                 println!("Received a request: {}",
                          String::from_utf8_lossy( &buffer[..]));
-                let response = self.deserialize_and_response(&buffer);
+                let response = Server::deserialize_and_response(&buffer);
                 stream.write(response.as_bytes()).unwrap();
                 stream.flush().unwrap();
             }
@@ -47,7 +47,8 @@ impl Server {
         }
     }
 
-    fn deserialize_and_response(self, &buffer: &[u8; 1024]) -> String {
+    //todo replace with request handler
+    fn deserialize_and_response(buffer: &[u8; 1024]) -> String {
         let get = b"GET / HTTP/1.1\r\n";
         let sleep = b"GET /sleep HTTP/1.1\r\n";
 
